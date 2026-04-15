@@ -21,7 +21,11 @@ const generateToken = (id) => {
 const registerUser = async (req, res) => {
   try {
     const { name, email, phone, password } = req.body;
-
+    if (!name || !email || !phone || !password) {
+    return res.status(400).json({
+        message: "Please provide all inputs"
+    });
+}
     const userExists = await User.findOne({ $or: [{ email }, { phone }] });
     if (userExists) {
       return res.status(400).json({ message: 'User with this email or phone already exists' });
@@ -93,4 +97,51 @@ const loginUser = async (req, res) => {
   }
 };
 
-module.exports = { registerUser, loginUser};
+
+
+const getUserProfile = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id).select('-password -mpin');
+    if (user) {
+      const responseUser = user.toObject();
+      responseUser.hasMpinSet = !!req.user.mpin; 
+      res.json(responseUser);
+    } else {
+      res.status(404).json({ message: 'User not found' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
+
+
+
+
+
+
+
+
+const setupMpin = async (req, res) => {
+  try {
+    const { mpin } = req.body; // Expecting a 4 or 6 digit string
+
+    if (!mpin || mpin.length < 4) {
+      return res.status(400).json({ message: 'Please provide a valid MPIN (at least 4 digits)' });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedMpin = await bcrypt.hash(mpin.toString(), salt);
+
+    const user = await User.findById(req.user._id);
+    user.mpin = hashedMpin;
+    await user.save();
+
+    res.json({ message: 'MPIN setup successfully!' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+module.exports = { registerUser, loginUser, getUserProfile, setupMpin};

@@ -2,6 +2,15 @@ require('dotenv').config();
 const express=require('express')
 
 const authRoutes=require('./src/routes/auth.routes')
+const txnRoutes = require('./src/routes/txnRoutes');
+const walletRoutes = require('./src/routes/walletRoutes');
+
+
+
+
+
+
+
 const swaggerUi = require('swagger-ui-express');
 const connectDB=require('./src/config/db')
 
@@ -40,7 +49,8 @@ app.get("/",(req,res)=>{
 
 
 app.use('/api/auth',authRoutes);
-
+app.use('/api/transactions', txnRoutes);
+app.use('/api/wallet', walletRoutes); 
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
