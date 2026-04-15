@@ -1,0 +1,34 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "PhonePe Clone API",
+    "description": "A simple clone backend for PhonePe features (Auth, Send Money, History)",
+    "version": "1.0.0"
+  },
+  "host": "localhost:3000",
+  "basePath": "/",
+  "schemes": [
+    "http"
+  ],
+  "securityDefinitions": {
+    "bearerAuth": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header",
+      "description": "Enter token in format (Bearer <token>)"
+    }
+  },
+  "paths": {
+    "/": {
+      "get": {
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    }
+  }
+}
+  
